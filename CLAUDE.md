@@ -8,15 +8,26 @@ This is an Advent of Code 2025 solution repository written in Go, showcasing exp
 
 ## Architecture Philosophy
 
-This codebase follows **idiomatic Go best practices** for all solutions, embodying the language's core philosophy:
-- **Clear is better than clever** - Well-structured abstractions over ad-hoc solutions
-- **Interfaces define behavior** - Small, focused interfaces enable polymorphism and testability
+This codebase follows **idiomatic Go best practices**, embodying the language's core philosophy:
+
+### Go Principles Applied
+- **Clear is better than clever** - Well-structured code over complex abstractions
+- **Interfaces define behavior** - Small, focused interfaces enable polymorphism
 - **Composition over inheritance** - Strategy pattern and struct embedding for code reuse
-- **Strong typing prevents errors** - Domain-specific types (not primitive obsession)
+- **Strong typing prevents errors** - Custom types when they add safety and meaning
 - **Errors are values** - Explicit error handling with context wrapping
 - **Accept interfaces, return concrete types** - Flexible inputs, concrete outputs
 
-**IMPORTANT: Day 1's architecture is the DEFAULT pattern for all days.** Every solution should follow this structure unless explicitly instructed otherwise. This approach aligns with Go's philosophy of writing maintainable, testable, and extensible code.
+### Pattern Application Strategy
+**Use Day 1 as architectural reference, but apply patterns thoughtfully:**
+- Always use `io.Reader` for parsers (testability)
+- Always separate parsing from solving logic
+- Use custom types when they prevent mixing incompatible values
+- Use interfaces when parts differ in behavior (not just parameters)
+- Use functional patterns for complex collection transformations
+- **Don't create files or abstractions just for symmetry**
+
+The goal is idiomatic, maintainable Go code - not pattern maximalism.
 
 ## Directory Structure
 
@@ -52,35 +63,51 @@ func Part1(inputPath string) (int, error)
 func Part2(inputPath string) (int, error)
 ```
 
-### Required Architecture (Day 1 pattern - use for ALL days)
+### Architecture Pattern - Apply Thoughtfully
 
-1. **types.go** - Domain modeling
-   - Custom types for problem domain (e.g., `Position`, `Direction`)
-   - Methods on types for domain operations
-   - Implement `fmt.Stringer` for debugging
+**Core principle: Use patterns when they add value, not for ceremony.**
 
-2. **counter.go** / strategy implementation
-   - Define interfaces for behavioral variation
-   - Implement strategy pattern when parts differ in behavior
-   - Use composition over inheritance
+#### Always Include:
 
-3. **parser.go** - Input handling
-   - Accept `io.Reader` for testability
-   - Provide `ProcessFile()` convenience function
-   - Parse line-by-line with `bufio.Scanner`
+1. **parser.go** - Input handling with `io.Reader` pattern
+   - Accept `io.Reader` for testability (not `*os.File`)
+   - Provide `ProcessFile()` and `FromFile()` convenience functions
+   - Parse with `bufio.Scanner`
    - Wrap errors with context (`fmt.Errorf` with `%w`)
+   - **Why**: Makes code testable with `strings.NewReader()` and provides clean abstraction
 
-4. **solution.go** - Core logic
+2. **part1.go / part2.go** - Clean, focused solution functions
+   - Export required signatures: `func Part1(inputPath string) (int, error)`
+   - Delegate to solver/strategy when appropriate
+   - Keep implementation logic out of these files
+   - **Why**: Maintains consistent API and separates concerns
+
+#### Include When Valuable:
+
+3. **types.go** - Domain modeling (when types prevent errors or add meaning)
+   - Create custom types when they prevent mixing incompatible values
+   - Example: `type Position int` vs `type Direction int` (both ints, different meanings)
+   - Add methods for domain operations
+   - Implement `fmt.Stringer` for debugging
+   - **Skip if**: Primitives like `int`, `string` are already clear (no confusion possible)
+   - **Good**: `Range struct { Start, End int }` (clear without wrapping)
+   - **Questionable**: `type ProductID int` with no methods (just ceremony)
+
+4. **validator.go / counter.go / etc.** - Strategy interfaces (when parts differ in behavior)
+   - Define interfaces for behavioral variation between Part 1 and Part 2
+   - Implement strategy pattern for varying logic
+   - Use composition over inheritance
+   - **Skip if**: Parts differ only in parameters, not behavior
+   - **Good**: Different validation algorithms (Part 1: exact twice, Part 2: at least twice)
+   - **Questionable**: Same algorithm with different threshold values
+
+5. **solution.go** - Solver and functional patterns (when reusable abstractions exist)
    - Solver struct composing strategies
-   - Functional patterns: Map, Filter, Reduce
+   - Functional patterns: Map, Filter, Reduce (when working with collections)
    - Reusable pipeline abstractions
-
-5. **part1.go / part2.go** - Clean one-liners
-   ```go
-   func Part1(inputPath string) (int, error) {
-       return SolveWith(Strategy1{}, inputPath)
-   }
-   ```
+   - **Skip if**: Problem is a simple one-pass algorithm
+   - **Good**: Multiple transformations, filtering, aggregation
+   - **Questionable**: Single loop that's clearer inline
 
 ### Registration in cmd/main.go
 
@@ -129,47 +156,78 @@ go build -o aoc-runner cmd/main.go
 
 ## Adding a New Day
 
-**ALWAYS follow the Day 1 pattern unless explicitly told to use a simpler approach.**
+**Follow idiomatic Go patterns, using Day 1 as reference. Apply each pattern thoughtfully based on problem needs.**
 
-### Step-by-Step Process
+### Decision Framework
 
-1. **Design domain types** - Create `types.go` with custom types
-   - Model the problem domain (e.g., `Position`, `Instruction`, `Range`)
-   - Add methods for domain operations
-   - Implement `fmt.Stringer` for debugging
-   - Use strong typing to prevent errors
+Ask yourself these questions to decide which patterns to apply:
 
-2. **Identify behavioral variations** - Create interfaces (e.g., `counter.go`, `validator.go`)
-   - Define small, focused interfaces for strategy pattern
-   - Implement concrete strategies for Part 1 and Part 2 variations
-   - This embodies "accept interfaces, return concrete types"
+1. **Do I have incompatible types that could be mixed?** → Custom types in `types.go`
+   - Yes: Create domain types (e.g., `Position` vs `Direction`)
+   - No: Use primitives or simple structs (e.g., `Range struct { Start, End int }`)
 
-3. **Build parser** - Create `parser.go` using `io.Reader`
-   - Accept `io.Reader` for maximum testability
-   - Provide `ProcessFile()` and `FromFile()` convenience functions
-   - Parse line-by-line with `bufio.Scanner`
-   - Wrap all errors with context (`fmt.Errorf` with `%w`)
+2. **Do Part 1 and Part 2 differ in behavior/algorithm?** → Strategy pattern with interfaces
+   - Yes: Create interface + implementations in `validator.go` / `counter.go`
+   - No: Share logic, parameterize differences
 
-4. **Implement solver** - Create `solution.go` with functional patterns
-   - Define `Solver` struct that composes strategies
-   - Add functional patterns: `Map`, `Filter`, `Reduce` if applicable
-   - Create `SolveWith()` helper function
-   - Build reusable pipeline abstractions
+3. **Is there complex processing with multiple transformations?** → Solver with functional patterns
+   - Yes: Create `solution.go` with Map/Filter/Reduce pipelines
+   - No: Implement directly in part files
 
-5. **Wire it up** - Make `part1.go` and `part2.go` clean one-liners
-   ```go
-   func Part1(inputPath string) (int, error) {
-       return SolveWith(Part1Strategy{}, inputPath)
-   }
-   ```
+### Implementation Steps
 
-6. **Register** - Update `cmd/main.go`
-   - Import the new package
-   - Add entries to `solvers` slice
+**Always:**
 
-7. **Document** (optional) - Add `README.md` or problem description
-   - Save problem description as `cmd/day{N}.md`
-   - Optionally document patterns used in package README
+1. **Create `parser.go`** - Input handling with `io.Reader` pattern
+   - Accept `io.Reader` for testability
+   - Provide `FromFile()` and `ProcessFile()` helpers
+   - Parse with `bufio.Scanner`
+   - Wrap errors with context
+
+2. **Create `part1.go` and `part2.go`** - Solution entry points
+   - Export required signatures
+   - Keep clean and focused
+   - Delegate to parsers, solvers, or strategies
+
+3. **Register in `cmd/main.go`**
+   - Import the new day package
+   - Add to `solvers` slice
+
+**When valuable:**
+
+4. **Create `types.go`** (if domain types prevent errors or add meaning)
+   - Define custom types for distinct concepts
+   - Add domain methods
+   - Implement `fmt.Stringer`
+
+5. **Create strategy file** (if parts have different behaviors)
+   - Define small interface for variation point
+   - Implement concrete strategies
+   - Use composition in solver
+
+6. **Create `solution.go`** (if complex transformations exist)
+   - Build solver with composed strategies
+   - Add functional patterns for collections
+   - Provide `SolveWith()` helper
+
+**Example - Simple Day:**
+```
+day3/
+├── parser.go    # io.Reader-based input parsing
+├── part1.go     # Direct implementation
+└── part2.go     # Direct implementation
+```
+
+**Example - Complex Day (like Day 1):**
+```
+day1/
+├── types.go     # Position, Direction, Rotation types
+├── counter.go   # Counter interface + strategies
+├── parser.go    # io.Reader-based parsing
+├── solution.go  # Solver with functional patterns
+├── part1.go     # One-liner: SolveWith(Strategy1{}, path)
+└── part2.go     # One-liner: SolveWith(Strategy2{}, path)
+```
 
 ## Go Best Practices (Follow for ALL Solutions)
 

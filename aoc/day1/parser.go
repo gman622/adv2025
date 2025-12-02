@@ -5,9 +5,17 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
+	"strings"
 )
 
-// RotationParser reads and parses rotations from an io.Reader
+// Rotation represents a dial rotation instruction (L10, R25, etc.)
+type Rotation struct {
+	Direction rune // 'L' or 'R'
+	Distance  int
+}
+
+// RotationParser reads and parses dial rotation instructions from input
 type RotationParser struct {
 	scanner *bufio.Scanner
 }
@@ -24,12 +32,12 @@ func (p *RotationParser) Parse(fn func(Rotation) error) error {
 	lineNum := 0
 	for p.scanner.Scan() {
 		lineNum++
-		line := p.scanner.Text()
+		line := strings.TrimSpace(p.scanner.Text())
 		if line == "" {
 			continue
 		}
 
-		rotation, err := ParseRotation(line)
+		rotation, err := parseRotation(line)
 		if err != nil {
 			return fmt.Errorf("line %d: %w", lineNum, err)
 		}
@@ -46,23 +54,12 @@ func (p *RotationParser) Parse(fn func(Rotation) error) error {
 	return nil
 }
 
-// ParseAll reads all rotations into a slice
-func (p *RotationParser) ParseAll() ([]Rotation, error) {
-	var rotations []Rotation
-	err := p.Parse(func(r Rotation) error {
-		rotations = append(rotations, r)
-		return nil
-	})
-	return rotations, err
-}
-
 // FromFile creates a parser from a file path
 func FromFile(path string) (*RotationParser, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("opening file: %w", err)
 	}
-	// Note: caller should close the file, but for this use case we'll accept the defer
 	return NewRotationParser(f), nil
 }
 
@@ -76,4 +73,24 @@ func ProcessFile(path string, fn func(Rotation) error) error {
 
 	parser := NewRotationParser(f)
 	return parser.Parse(fn)
+}
+
+// parseRotation parses a rotation string like "L68" or "R48"
+func parseRotation(s string) (Rotation, error) {
+	s = strings.TrimSpace(s)
+	if len(s) < 2 {
+		return Rotation{}, fmt.Errorf("invalid rotation: too short")
+	}
+
+	dir := rune(s[0])
+	if dir != 'L' && dir != 'R' {
+		return Rotation{}, fmt.Errorf("invalid direction: %c", s[0])
+	}
+
+	distance, err := strconv.Atoi(s[1:])
+	if err != nil {
+		return Rotation{}, fmt.Errorf("invalid distance in %q: %w", s, err)
+	}
+
+	return Rotation{Direction: dir, Distance: distance}, nil
 }

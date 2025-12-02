@@ -37,23 +37,10 @@ func main() {
 	partFlag := flag.Int("part", 0, "Part to run (0 for all parts of the day)")
 	flag.Parse()
 
-	// Find inputs directory - try multiple paths
-	var inputDir string
-	possiblePaths := []string{
-		filepath.Join(".", "go", "inputs"),
-		filepath.Join(".", "inputs"),
-		filepath.Join("..", "go", "inputs"),
-	}
-
-	for _, path := range possiblePaths {
-		if _, err := os.Stat(path); err == nil {
-			inputDir = path
-			break
-		}
-	}
-
-	if inputDir == "" {
-		log.Fatalf("Inputs directory not found. Tried: %v", possiblePaths)
+	// Inputs directory
+	inputDir := "inputs"
+	if _, err := os.Stat(inputDir); err != nil {
+		log.Fatalf("Inputs directory not found at %s", inputDir)
 	}
 
 	// Filter solvers based on flags

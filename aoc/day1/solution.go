@@ -4,8 +4,7 @@ import "fmt"
 
 // Solver represents a generic dial rotation problem solver
 type Solver struct {
-	dial   *Dial
-	parser *RotationParser
+	dial *Dial
 }
 
 // NewSolver creates a solver with a specific counter strategy

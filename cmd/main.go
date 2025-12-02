@@ -13,6 +13,7 @@ import (
 	// The import path is constructed from:
 	// <ModulePrefix>/<DirectoryPath to the package>
 	day1 "adv2025/aoc/day1"
+	day2 "adv2025/aoc/day2"
 	// ----------------------------------------pw
 )
 
@@ -27,6 +28,8 @@ type DayPart struct {
 var solvers = []DayPart{
 	{1, 1, day1.Part1},
 	{1, 2, day1.Part2},
+	{2, 1, day2.Part1},
+	{2, 2, day2.Part2},
 }
 
 func main() {

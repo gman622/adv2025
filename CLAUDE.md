@@ -8,14 +8,15 @@ This is an Advent of Code 2025 solution repository written in Go, showcasing exp
 
 ## Architecture Philosophy
 
-This codebase demonstrates **production-quality Go** rather than minimal solutions:
-- Strong typing with domain-specific types
-- Interface-based design for polymorphism
-- Functional programming patterns (Map/Filter/Reduce)
-- Comprehensive error handling with context
-- Composable abstractions and clean separation of concerns
+This codebase follows **idiomatic Go best practices** for all solutions, embodying the language's core philosophy:
+- **Clear is better than clever** - Well-structured abstractions over ad-hoc solutions
+- **Interfaces define behavior** - Small, focused interfaces enable polymorphism and testability
+- **Composition over inheritance** - Strategy pattern and struct embedding for code reuse
+- **Strong typing prevents errors** - Domain-specific types (not primitive obsession)
+- **Errors are values** - Explicit error handling with context wrapping
+- **Accept interfaces, return concrete types** - Flexible inputs, concrete outputs
 
-**Day 1** serves as the architectural reference - it's intentionally over-engineered to showcase Go's capabilities.
+**IMPORTANT: Day 1's architecture is the DEFAULT pattern for all days.** Every solution should follow this structure unless explicitly instructed otherwise. This approach aligns with Go's philosophy of writing maintainable, testable, and extensible code.
 
 ## Directory Structure
 
@@ -51,7 +52,7 @@ func Part1(inputPath string) (int, error)
 func Part2(inputPath string) (int, error)
 ```
 
-### Recommended Architecture (following Day 1 pattern)
+### Required Architecture (Day 1 pattern - use for ALL days)
 
 1. **types.go** - Domain modeling
    - Custom types for problem domain (e.g., `Position`, `Direction`)
@@ -128,77 +129,90 @@ go build -o aoc-runner cmd/main.go
 
 ## Adding a New Day
 
-### Quick Start (Simple Approach)
+**ALWAYS follow the Day 1 pattern unless explicitly told to use a simpler approach.**
 
-1. Create directory: `mkdir -p aoc/day{N}`
-2. Implement `part1.go` and `part2.go` with required signatures
-3. Add import and registration in `cmd/main.go`
-4. Place input in `inputs/day{N}_input.txt`
-
-### Expert Approach (Following Day 1 Pattern)
+### Step-by-Step Process
 
 1. **Design domain types** - Create `types.go` with custom types
-2. **Identify behavioral variations** - Create interfaces in `counter.go` or similar
+   - Model the problem domain (e.g., `Position`, `Instruction`, `Range`)
+   - Add methods for domain operations
+   - Implement `fmt.Stringer` for debugging
+   - Use strong typing to prevent errors
+
+2. **Identify behavioral variations** - Create interfaces (e.g., `counter.go`, `validator.go`)
+   - Define small, focused interfaces for strategy pattern
+   - Implement concrete strategies for Part 1 and Part 2 variations
+   - This embodies "accept interfaces, return concrete types"
+
 3. **Build parser** - Create `parser.go` using `io.Reader`
+   - Accept `io.Reader` for maximum testability
+   - Provide `ProcessFile()` and `FromFile()` convenience functions
+   - Parse line-by-line with `bufio.Scanner`
+   - Wrap all errors with context (`fmt.Errorf` with `%w`)
+
 4. **Implement solver** - Create `solution.go` with functional patterns
-5. **Wire it up** - Make `part1.go` and `part2.go` one-liners
-6. **Document** - Add `README.md` explaining patterns used
-7. **Register** - Update `cmd/main.go`
+   - Define `Solver` struct that composes strategies
+   - Add functional patterns: `Map`, `Filter`, `Reduce` if applicable
+   - Create `SolveWith()` helper function
+   - Build reusable pipeline abstractions
 
-### File Template (Simple Version)
+5. **Wire it up** - Make `part1.go` and `part2.go` clean one-liners
+   ```go
+   func Part1(inputPath string) (int, error) {
+       return SolveWith(Part1Strategy{}, inputPath)
+   }
+   ```
 
-```go
-package day{N}
+6. **Register** - Update `cmd/main.go`
+   - Import the new package
+   - Add entries to `solvers` slice
 
-import (
-    "bufio"
-    "os"
-)
+7. **Document** (optional) - Add `README.md` or problem description
+   - Save problem description as `cmd/day{N}.md`
+   - Optionally document patterns used in package README
 
-func Part1(inputPath string) (int, error) {
-    file, err := os.Open(inputPath)
-    if err != nil {
-        return 0, err
-    }
-    defer file.Close()
+## Go Best Practices (Follow for ALL Solutions)
 
-    scanner := bufio.NewScanner(file)
-    // Implementation here
+### Type Safety - Fight Primitive Obsession
+- **Always** use custom types instead of primitives (`type Position int` vs `int`)
+- This prevents mixing incompatible values and adds domain meaning
+- Add methods to custom types for domain operations
+- Example: `type ProductID int` with `func (id ProductID) IsValid() bool`
 
-    return result, scanner.Err()
-}
-```
+### Interfaces - Define Behavior, Not Data
+- Define small, focused interfaces (single-method is ideal)
+- **Accept interfaces, return concrete types** - This is Go's golden rule
+- Use interfaces for strategy/behavior variation between parts
+- Example: `type Validator interface { IsValid(int) bool }`
 
-## Go Best Practices in This Codebase
+### Error Handling - Errors Are Values
+- **Always** check errors, never ignore them
+- Wrap errors with context: `fmt.Errorf("parsing input: %w", err)`
+- Return errors, don't panic (panics are for programmer errors only)
+- Provide context at each layer of the call stack
 
-### Type Safety
-- Use custom types instead of primitives (`type Position int` vs `int`)
-- This prevents mixing incompatible values
-
-### Interfaces
-- Define small, focused interfaces
-- Accept interfaces, return concrete types
-- Use for strategy/behavior variation
-
-### Error Handling
-- Always check errors
-- Wrap errors with context: `fmt.Errorf("context: %w", err)`
-- Return errors, don't panic
-
-### io.Reader Pattern
-- Accept `io.Reader` for parsers (testable without files)
-- Provide `FromFile()` convenience functions
+### io.Reader Pattern - Depend on Abstractions
+- **Always** accept `io.Reader` for parsers (not `*os.File`)
+- This makes code testable with `strings.NewReader()`
+- Provide `FromFile()` convenience functions that wrap `os.Open()`
 - Use `bufio.Scanner` for line-by-line processing
 
-### Method Receivers
-- Use pointer receivers for methods that modify state
-- Use value receivers for methods that don't mutate
-- Be consistent within a type
+### Composition - Build Complex Behavior from Simple Parts
+- Use struct embedding and composition over inheritance
+- Example: `Solver` struct composes `Dial` and strategies
+- Strategy pattern for varying behavior (Part 1 vs Part 2)
+- This embodies "composition over inheritance"
 
-### Functional Patterns
+### Method Receivers - Pointer vs Value
+- Use pointer receivers `(s *Solver)` for methods that modify state
+- Use value receivers `(p Position)` for methods that don't mutate
+- Be consistent within a type - don't mix pointer and value receivers
+
+### Functional Patterns - First-Class Functions
 - Higher-order functions for flexible processing
 - Map/Filter/Reduce when working with collections
-- Callbacks for custom iteration logic
+- Callbacks for custom iteration logic (`ProcessFile` in Day 1)
+- Example: `func ProcessFile(path string, fn func(Rotation) error)`
 
 ## Testing Approach
 

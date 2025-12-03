@@ -11,6 +11,7 @@ import (
 
 	day1 "adv2025/aoc/day1"
 	day2 "adv2025/aoc/day2"
+	day3 "adv2025/aoc/day3"
 )
 
 type solver struct {
@@ -24,6 +25,8 @@ var solvers = []solver{
 	{1, 2, day1.Part2},
 	{2, 1, day2.Part1},
 	{2, 2, day2.Part2},
+	{3, 1, day3.Part1},
+	{3, 2, day3.Part2},
 }
 
 func main() {

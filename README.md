@@ -173,23 +173,27 @@ This repository showcases:
 
 ## 📊 Performance
 
-Solutions prioritize clarity but remain efficient:
+Solutions prioritize clarity but remain efficient. Recent optimizations achieved significant speedups:
 
 ```
 🎄 Advent of Code 2025 Runner
 ==================================================
 
-✅ Day 1 Part 1: 1147 (581µs)
-✅ Day 1 Part 2: 6789 (212µs)
-✅ Day 2 Part 1: 56660955519 (56.6ms)
-✅ Day 2 Part 2: 79183223243 (56.7ms)
-✅ Day 3 Part 1: 17405 (1.9ms)
-✅ Day 3 Part 2: 171990312704598 (105µs)
-✅ Day 4 Part 1: 1409 (755µs)
-✅ Day 4 Part 2: 8366 (6.5ms)
+✅ Day 1 Part 1: 1147 (505µs)
+✅ Day 1 Part 2: 6789 (210µs)
+✅ Day 2 Part 1: 56660955519 (38.3ms)
+✅ Day 2 Part 2: 79183223243 (54.2ms)
+✅ Day 3 Part 1: 17405 (93µs) ⚡ 19x faster
+✅ Day 3 Part 2: 171990312704598 (94µs)
+✅ Day 4 Part 1: 1409 (1.5ms)
+✅ Day 4 Part 2: 8366 (6.9ms)
 
-⏱️  Total time: 123ms
+⏱️  Total time: 102ms
 ```
+
+**Notable Optimizations:**
+- **Day 3 Part 1**: O(n²) → O(n) algorithm using max-digit finding (1.9ms → 93µs)
+- All solutions include comprehensive algorithm analysis and complexity documentation
 
 ## 🔧 Development
 

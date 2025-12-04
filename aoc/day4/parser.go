@@ -32,6 +32,13 @@ func (p *Parser) ParseAll() ([]string, error) {
 			continue
 		}
 
+		// Validate that the line contains only '@' and '.' characters
+		for _, ch := range line {
+			if ch != '@' && ch != '.' {
+				return nil, fmt.Errorf("line %d: invalid character %q, expected '@' or '.'", lineNum, ch)
+			}
+		}
+
 		lines = append(lines, line)
 	}
 

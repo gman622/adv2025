@@ -13,6 +13,14 @@ import (
 	day2 "adv2025/aoc/day2"
 	day3 "adv2025/aoc/day3"
 	day4 "adv2025/aoc/day4"
+	day5 "adv2025/aoc/day5"
+	day6 "adv2025/aoc/day6"
+	day7 "adv2025/aoc/day7"
+	day8 "adv2025/aoc/day8"
+	day9 "adv2025/aoc/day9"
+	day10 "adv2025/aoc/day10"
+	day11 "adv2025/aoc/day11"
+	day12 "adv2025/aoc/day12"
 )
 
 type solver struct {
@@ -34,6 +42,14 @@ func init() {
 	register(2, day2.Parts...)
 	register(3, day3.Parts...)
 	register(4, day4.Parts...)
+	register(5, day5.Parts...)
+	register(6, day6.Parts...)
+	register(7, day7.Parts...)
+	register(8, day8.Parts...)
+	register(9, day9.Parts...)
+	register(10, day10.Parts...)
+	register(11, day11.Parts...)
+	register(12, day12.Parts...)
 }
 
 func main() {

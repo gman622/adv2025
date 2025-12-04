@@ -20,13 +20,18 @@ type solver struct {
 	solve func(string) (int, error)
 }
 
-var solvers = []solver{
-	{1, 1, day1.Part1},
-	{1, 2, day1.Part2},
-	{2, 1, day2.Part1},
-	{2, 2, day2.Part2},
-	{3, 1, day3.Part1},
-	{3, 2, day3.Part2},
+var solvers []solver
+
+func register(day int, parts ...func(string) (int, error)) {
+	for i, part := range parts {
+		solvers = append(solvers, solver{day, i + 1, part})
+	}
+}
+
+func init() {
+	register(1, day1.Parts...)
+	register(2, day2.Parts...)
+	register(3, day3.Parts...)
 }
 
 func main() {

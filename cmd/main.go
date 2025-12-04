@@ -12,6 +12,7 @@ import (
 	day1 "adv2025/aoc/day1"
 	day2 "adv2025/aoc/day2"
 	day3 "adv2025/aoc/day3"
+	day4 "adv2025/aoc/day4"
 )
 
 type solver struct {
@@ -32,6 +33,7 @@ func init() {
 	register(1, day1.Parts...)
 	register(2, day2.Parts...)
 	register(3, day3.Parts...)
+	register(4, day4.Parts...)
 }
 
 func main() {

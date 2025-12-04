@@ -121,6 +121,7 @@ func Part2(inputPath string) (int, error) {
 | 2   | ⭐     | ⭐     | Range validation, Custom types, Strategy pattern |
 | 3   | ⭐     | ⭐     | Grid algorithms, Parser validation, Direct implementation |
 | 4   | ⭐     | ⭐     | Iterative algorithms, Mutable grids, Adjacency checking |
+| 5-12 | 🚧     | 🚧     | *Scaffolding ready, awaiting problems* |
 
 ## 🛠️ Architecture Highlights
 

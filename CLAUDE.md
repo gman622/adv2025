@@ -27,7 +27,21 @@ This codebase follows **idiomatic Go best practices**, embodying the language's 
 - Use functional patterns for complex collection transformations
 - **Don't create files or abstractions just for symmetry**
 
-The goal is idiomatic, maintainable Go code - not pattern maximalism.
+### Solution Quality Over Speed
+**Prioritize elegant, idiomatic Go solutions over brute force:**
+- **Elegance first**: Favor clean algorithms and data structures over "just make it work"
+- **Idiomatic Go**: Use channels, goroutines, and standard library patterns where appropriate
+- **Algorithmic thinking**: Consider time/space complexity, look for O(n) when brute force is O(n²)
+- **Data structures matter**: Hash maps for lookups, heaps for priority, tries for prefixes
+- **Avoid nested loops when alternatives exist**: Maps, sets, or mathematical solutions often eliminate them
+- **Think before coding**: A few minutes of algorithm design saves hours of optimization later
+
+**However, balance is key:**
+- If the elegant solution is significantly more complex, brute force is acceptable for small inputs
+- Document why brute force was chosen and what alternatives exist
+- This is a learning repository - demonstrate good practices even when unnecessary
+
+The goal is production-quality Go code that showcases professional problem-solving, not just correct answers.
 
 ## Directory Structure
 

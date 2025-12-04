@@ -118,6 +118,9 @@ func Part2(inputPath string) (int, error) {
 | Day | Part 1 | Part 2 | Patterns Showcased |
 |-----|--------|--------|-------------------|
 | 1   | ⭐     | ⭐     | Strategy, Functional, Types, io.Reader, Stringer |
+| 2   | ⭐     | ⭐     | Range validation, Custom types, Strategy pattern |
+| 3   | ⭐     | ⭐     | Grid algorithms, Parser validation, Direct implementation |
+| 4   | ⭐     | ⭐     | Iterative algorithms, Mutable grids, Adjacency checking |
 
 ## 🛠️ Architecture Highlights
 
@@ -176,10 +179,16 @@ Solutions prioritize clarity but remain efficient:
 🎄 Advent of Code 2025 Runner
 ==================================================
 
-✅ Day 1 Part 1: 1147 (555µs)
-✅ Day 1 Part 2: 6789 (207µs)
+✅ Day 1 Part 1: 1147 (581µs)
+✅ Day 1 Part 2: 6789 (212µs)
+✅ Day 2 Part 1: 56660955519 (56.6ms)
+✅ Day 2 Part 2: 79183223243 (56.7ms)
+✅ Day 3 Part 1: 17405 (1.9ms)
+✅ Day 3 Part 2: 171990312704598 (105µs)
+✅ Day 4 Part 1: 1409 (755µs)
+✅ Day 4 Part 2: 8366 (6.5ms)
 
-⏱️  Total time: 780µs
+⏱️  Total time: 123ms
 ```
 
 ## 🔧 Development

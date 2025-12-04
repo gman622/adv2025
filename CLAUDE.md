@@ -111,12 +111,22 @@ func Part2(inputPath string) (int, error)
 
 ### Registration in cmd/main.go
 
+Each day package exports a `Parts` slice:
+```go
+// In aoc/day{N}/day{N}.go
+package day{N}
+
+var Parts = []func(string) (int, error){Part1, Part2}
+```
+
+Register in main using variadic arguments:
 ```go
 import day{N} "adv2025/aoc/day{N}"
 
-var solvers = []DayPart{
-    {N, 1, day{N}.Part1},
-    {N, 2, day{N}.Part2},
+func init() {
+    register(1, day1.Parts...)
+    register(2, day2.Parts...)
+    register(N, day{N}.Parts...)
 }
 ```
 
@@ -180,40 +190,46 @@ Ask yourself these questions to decide which patterns to apply:
 
 1. **Create `parser.go`** - Input handling with `io.Reader` pattern
    - Accept `io.Reader` for testability
-   - Provide `FromFile()` and `ProcessFile()` helpers
+   - Provide `FromFile()` convenience function
    - Parse with `bufio.Scanner`
    - Wrap errors with context
+   - Add validation for expected input format
 
 2. **Create `part1.go` and `part2.go`** - Solution entry points
-   - Export required signatures
+   - Export required signatures: `func Part1(inputPath string) (int, error)`
    - Keep clean and focused
    - Delegate to parsers, solvers, or strategies
 
-3. **Register in `cmd/main.go`**
+3. **Create `day{N}.go`** - Package exports
+   - Export `Parts` slice: `var Parts = []func(string) (int, error){Part1, Part2}`
+   - Can add Part3+ if needed (rare but supported)
+
+4. **Register in `cmd/main.go`**
    - Import the new day package
-   - Add to `solvers` slice
+   - Add to `init()`: `register(N, dayN.Parts...)`
 
 **When valuable:**
 
-4. **Create `types.go`** (if domain types prevent errors or add meaning)
+5. **Create `types.go`** (if domain types prevent errors or add meaning)
    - Define custom types for distinct concepts
    - Add domain methods
    - Implement `fmt.Stringer`
 
-5. **Create strategy file** (if parts have different behaviors)
+6. **Create strategy file** (if parts have different behaviors)
    - Define small interface for variation point
    - Implement concrete strategies
    - Use composition in solver
 
-6. **Create `solution.go`** (if complex transformations exist)
+7. **Create `solution.go`** (if complex transformations exist)
    - Build solver with composed strategies
    - Add functional patterns for collections
    - Provide `SolveWith()` helper
 
 **Example - Simple Day:**
 ```
-day3/
-├── parser.go    # io.Reader-based input parsing
+day4/
+├── day4.go      # Parts slice export
+├── parser.go    # io.Reader-based input parsing with validation
 ├── part1.go     # Direct implementation
 └── part2.go     # Direct implementation
 ```
@@ -221,6 +237,7 @@ day3/
 **Example - Complex Day (like Day 1):**
 ```
 day1/
+├── day1.go      # Parts slice export
 ├── types.go     # Position, Direction, Rotation types
 ├── counter.go   # Counter interface + strategies
 ├── parser.go    # io.Reader-based parsing

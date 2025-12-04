@@ -55,8 +55,7 @@ adv2025/
 │       ├── solution.go     # Core solver logic and functional patterns
 │       ├── part1.go        # Part 1 solution (typically a one-liner)
 │       ├── part2.go        # Part 2 solution (typically a one-liner)
-│       ├── example.go      # Usage examples (optional)
-│       └── README.md       # Day-specific documentation (optional)
+│       └── example.go      # Usage examples (optional)
 ├── cmd/                    # Main runner and problem descriptions
 │   ├── main.go             # Centralized runner with timing
 │   └── day{N}.md           # Problem descriptions from AOC

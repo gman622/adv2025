@@ -179,6 +179,12 @@ go build -o aoc-runner cmd/main.go
 
 ## Adding a New Day
 
+**IMPORTANT: Days 5-12 already have scaffolding created!**
+- Check for existing files first: `parser.go`, `part1.go`, `part2.go`, `day{N}.go` are already present
+- Read existing files to see what's there before trying to create new ones
+- Update/append to existing files rather than creating from scratch
+- This saves time and avoids failed Write operations
+
 **Follow idiomatic Go patterns, using Day 1 as reference. Apply each pattern thoughtfully based on problem needs.**
 
 ### Decision Framework

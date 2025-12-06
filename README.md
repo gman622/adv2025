@@ -121,7 +121,9 @@ func Part2(inputPath string) (int, error) {
 | 2   | ⭐     | ⭐     | Range validation, Custom types, Strategy pattern |
 | 3   | ⭐     | ⭐     | Grid algorithms, Parser validation, Direct implementation |
 | 4   | ⭐     | ⭐     | Iterative algorithms, Mutable grids, Adjacency checking |
-| 5-12 | 🚧     | 🚧     | *Scaffolding ready, awaiting problems* |
+| 5   | ⭐     | ⭐     | Time-based validation, Hash maps, Custom comparators |
+| 6   | ⭐     | ⭐     | Enum pattern, Mode-based parsing, Column-wise algorithms |
+| 7-12 | 🚧     | 🚧     | *Scaffolding ready, awaiting problems* |
 
 ## 🛠️ Architecture Highlights
 
@@ -188,8 +190,12 @@ Solutions prioritize clarity but remain efficient. Recent optimizations achieved
 ✅ Day 3 Part 2: 171990312704598 (94µs)
 ✅ Day 4 Part 1: 1409 (1.5ms)
 ✅ Day 4 Part 2: 8366 (6.9ms)
+✅ Day 5 Part 1: 5203818 (4.2ms)
+✅ Day 5 Part 2: 6724 (2.1ms)
+✅ Day 6 Part 1: 4309240495780 (573µs)
+✅ Day 6 Part 2: 9170286552289 (616µs)
 
-⏱️  Total time: 102ms
+⏱️  Total time: ~110ms
 ```
 
 **Notable Optimizations:**

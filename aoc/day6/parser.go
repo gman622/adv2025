@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 )
 
 // Parser reads and parses input for Day 6.
@@ -28,25 +27,24 @@ func NewParser(r io.Reader) *Parser {
 	}
 }
 
-// ParseAll reads all lines from the input.
+// ParseAll reads all lines from the input, preserving whitespace.
+// For Day 6, we need to preserve the exact column structure to parse vertical problems.
 func (p *Parser) ParseAll() ([]string, error) {
 	var lines []string
 	lineNum := 0
 
 	for p.scanner.Scan() {
 		lineNum++
-		line := strings.TrimSpace(p.scanner.Text())
-		if line == "" {
-			continue
-		}
-
-		// TODO: Add validation for expected input format
-		
+		line := p.scanner.Text() // Preserve exact whitespace
 		lines = append(lines, line)
 	}
 
 	if err := p.scanner.Err(); err != nil {
 		return nil, fmt.Errorf("reading input: %w", err)
+	}
+
+	if len(lines) == 0 {
+		return nil, fmt.Errorf("empty input")
 	}
 
 	return lines, nil
